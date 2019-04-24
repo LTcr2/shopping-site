@@ -9,7 +9,7 @@ Authors: Joel Burton, Christian Fernandez, Meggie Mahnken, Katie Byers.
 from flask import Flask, render_template, redirect, flash
 import jinja2
 
-import melons
+import melons #imports melons.py
 
 app = Flask(__name__)
 
@@ -48,7 +48,7 @@ def show_melon(melon_id):
     Show all info about a melon. Also, provide a button to buy that melon.
     """
 
-    melon = melons.get_by_id("meli")
+    melon = melons.get_by_id(melon_id)
     print(melon)
     return render_template("melon_details.html",
                            display_melon=melon)
