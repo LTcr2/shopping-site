@@ -78,20 +78,21 @@ def show_shopping_cart():
     cart = session['cart'] # get cart dict from session
     melon_list = []
     total = 0
-    for melon in melon_list:
-        total += melon.price
+    # for melon in melon_list:
+    #     total += melon.price
 
     for melon_id, melon_quantity in cart.items(): # get melon object through ids in list
-        melon_object = get_by_id(melon_id)
+        melon_object = melons.get_by_id(melon_id)
         melon_object.quantity = melon_quantity
-
-
-
+        melon_object.total_price = melon_object.quantity * melon_object.price
+        melon_list.append(melon_object)
+        total += melon_object.total_price
 
 #cart {melon: {}, anothermelon: {}}
-cart_list.append(session.cart[get_by_id("id")])
+# cart_list.append(session.cart[get_by_id("id")])
 
-    return render_template("cart.html")
+    return render_template("cart.html", melons=melon_list,
+                            total=total)
     
 
 
