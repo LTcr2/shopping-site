@@ -4,15 +4,23 @@
 {% block body %}
 
     <table class="table table-striped">
-        {% for {{ melon }} in {{ melons }} %}
         <thead>
+        <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+         {% for melon in melons %}
         <tr>
             <th>{{  melon.common_name }}</th>
             <th>{{  melon.quantity }}</th>
             <th>{{ melon.price }}</th>
-            <th>{{ melon.total_price}}</th>
+            <th>{{ melon.total_price }}</th>
         </tr>
-        </thead>
+        </tbody>
         {% endfor %}
     </table>
 

@@ -6,10 +6,12 @@ put melons in a shopping cart.
 Authors: Joel Burton, Christian Fernandez, Meggie Mahnken, Katie Byers.
 """
 
-from flask import Flask, render_template, redirect, flash, session
+from flask import Flask, render_template, redirect, flash, session, request
 import jinja2
 
 import melons #imports melons.py
+
+import customers #imports customers.py
 
 app = Flask(__name__)
 
@@ -75,7 +77,10 @@ def show_shopping_cart():
     #
     # Make sure your function can also handle the case wherein no cart has
     # been added to the session
-    cart = session['cart'] # get cart dict from session
+
+
+
+    cart = session.get("cart", {}) # get cart dict from session
     melon_list = []
     total = 0
     # for melon in melon_list:
@@ -87,9 +92,6 @@ def show_shopping_cart():
         melon_object.total_price = melon_object.quantity * melon_object.price
         melon_list.append(melon_object)
         total += melon_object.total_price
-
-#cart {melon: {}, anothermelon: {}}
-# cart_list.append(session.cart[get_by_id("id")])
 
     return render_template("cart.html", melons=melon_list,
                             total=total)
@@ -115,15 +117,15 @@ def add_to_cart(melon_id):
     # - flash a success message
     # - redirect the user to the cart page
 
-    if 'cart' not in session:
-        cart = {}
-        cart[melon_id] = cart.get(melon_id, 0) + 1
-        flash("Your melon is in the cart.")
-        return redirect("/cart")
+    if 'cart' in session:
+        cart = session['cart']
 
     else:
-        cart[melon_id] = cart.get(melon_id, 0) + 1
-        return redirect("/cart")
+        cart = session['cart'] = {}
+        
+    cart[melon_id] = cart.get(melon_id, 0) + 1
+    flash("Your melon is in the cart.")
+    return redirect("/cart")
 
 
 
@@ -156,7 +158,23 @@ def process_login():
     # - if they don't, flash a failure message and redirect back to "/login"
     # - do the same if a Customer with that email doesn't exist
 
-    return "Oops! This needs to be implemented"
+    email = request.form.get('email')
+    password = request.form.get('password')
+    customer = customers.get_by_email(email)
+
+    if customer:
+        if password == customer.password:
+            session['email'] = customer.email
+            flash("Your login is successful.")
+            return redirect("/melons")
+
+        else:
+            flash("Invalid login. Try again.")
+            return redirect("/login")
+    else:
+        flash("Invalid login. Try again.")
+        return redirect("/login")        
+
 
 
 @app.route("/checkout")
